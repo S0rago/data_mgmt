@@ -1,18 +1,75 @@
-version: '3'
+version: "3.5"
+
+networks:
+  test-network:
+    driver: bridge
+    name: test-network
 
 services:
-  kafka-cont:
-    image: 'kafka-test:latest'
+  kafka-prod:
+    image: 'kafka-prod:latest'
     build:
-      context: .
-    container_name: kafka-controller
+      context: ./producer
+    container_name: kafka-prod
+    networks:
+      test-network:
+        aliases:
+          - prod
     ports:
       - "5000:5000"
     expose:
       - "5000"
     environment:
-      service_name: afonin.controller
+      service_name: afonin.prod
       server: 51.250.30.101:9092
       topic: logs-topic
       port: 5000
       host: 0.0.0.0
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ENCODING: UTF-8
+      PYTHONUNBUFFERED: 1
+
+  kafka-cons:
+    image: 'kafka-cons:latest'
+    build:
+      context: ./consumer
+    container_name: kafka-cons
+    networks:
+      test-network:
+        aliases:
+          - cons
+    ports:
+    # external:internal
+      - "5001:5000"
+    expose:
+      - "5001"
+    environment:
+      service_name: afonin.cons
+      server: 51.250.30.101:9092
+      topic: logs-topic
+      port: 5000
+      host: 0.0.0.0
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      ENCODING: UTF-8
+      PYTHONUNBUFFERED: 1
+  
+  redis:
+    image: 'redis'
+    container_name: redis_service
+    command: redis-server
+    networks:
+      test-network:
+        aliases:
+          - redis
+    ports:
+    # external:internal
+      - "5002:6379"
+    expose:
+      - "5002"
+    volumes:
+      - $PWD/redis-data:/var/lib/redis
+      - $PWD/redis.conf:/local/etc/redis/redis.conf
+    environment:
+      REDIS_REPLICATION_MODE: master

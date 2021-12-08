@@ -5,14 +5,18 @@ from kafka import KafkaProducer
 from controller import Controller
 from asyncio import get_event_loop, ensure_future
 from aiohttp.web import Application, AppRunner, TCPSite
-from logging import getLogger
+import logging
 
 if __name__ == "__main__":
 
-    logger = getLogger("GetApp")
-    logger.debug("started")
-    
     service_name = os.getenv("service_name")
+    
+    logger = logging.getLogger(service_name)
+    logger.setLevel(logging.INFO)
+    logger.info("Producer started")
+    print("Producer started")
+    
+    
     topic = os.getenv("topic")
 
     producer = KafkaProducer(
@@ -26,6 +30,7 @@ if __name__ == "__main__":
     async def main(loop=None):
         application = Application(logger=logger)
         application.router.add_post("/api/v1/sendmsg", controller.add_data)
+        application.router.add_get("/api/v1/getmsg", controller.get_data)
 
         runner = AppRunner(application)
 

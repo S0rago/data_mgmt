@@ -7,6 +7,7 @@ from asyncio import get_event_loop, wait, shield
 from json import loads, dumps
 from uuid import uuid4
 from kafka import KafkaProducer
+from redis.client import Redis
 
 class Controller:
     
@@ -14,6 +15,12 @@ class Controller:
         self.service_name = service_name
         self.topic = topic
         self.producer = producer
+        self.encoding = os.getenv('ENCODING')
+        self.redis = Redis(
+            host=os.getenv("REDIS_HOST"),
+            port=os.getenv("REDIS_PORT"),
+            decode_responses=True
+        )
 
     async def add_data(self, request: Request) -> Response:
         if request.has_body:
@@ -27,6 +34,22 @@ class Controller:
         else:
             result = {"message": "Message send timeout"}
             status=500
+
+        response = respond_with_json(result, status)
+        return response
+
+    async def get_data(self, request: Request) -> Response:
+        if request.query:
+            key = request.query['key']
+            
+        value = self.redis.get(key)
+        
+        if value is not None:
+            result = loads(value)
+            status=200
+        else:
+            result = {"message": "Not found"}
+            status=404
 
         response = respond_with_json(result, status)
         return response

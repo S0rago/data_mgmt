@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kafka-deployment-afonin
+  name: kafka-cons-deployment-afonin
 spec:
   selector:
     matchLabels:
-      app: kafka-controller-afonin
+      app: kafka-cons-afonin
   template:
     metadata:
       labels:
-        app: kafka-controller-afonin
+        app: kafka-cons-afonin
     spec:
       containers:
-      - name: kafka-cont-afonin
+      - name: kafka-cons-afonin
         image: s0rago/data-management:latest
         resources:
           limits:
@@ -22,7 +22,7 @@ spec:
         - containerPort: 5000
         env:
           - name: service_name
-            value: afonin.controller
+            value: afonin.cons
           - name: server
             # value: 51.250.30.101:9092
             value: kafka-service:9092 
