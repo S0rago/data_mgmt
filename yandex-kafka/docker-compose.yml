@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  kafka-cont:
+    image: 'kafka-test:latest'
+    build:
+      context: .
+    container_name: kafka-controller
+    ports:
+      - "5000:5000"
+    expose:
+      - "5000"
+    environment:
+      service_name: afonin.controller
+      server: 51.250.30.101:9092
+      topic: logs-topic
+      port: 5000
+      host: 0.0.0.0
