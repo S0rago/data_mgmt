@@ -13,11 +13,11 @@ spec:
     spec:
       containers:
       - name: kafka-prod-afonin
-        image: s0rago/data-management:latest
+        image: s0rago/data-management:producer
         resources:
           limits:
             memory: "64Mi"
-            cpu: "200m"
+            cpu: "50m"
         ports:
         - containerPort: 5000
         env:
