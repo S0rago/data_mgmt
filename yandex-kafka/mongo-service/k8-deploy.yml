@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: kafka-mongo-afonin
-        image: s0rago/data-management:mongo-service
+        image: s0rago/data-management:mongo-orm
         resources:
           limits:
             memory: "64Mi"
