@@ -2,67 +2,56 @@ from asyncio.tasks import sleep
 import logging
 import os
 import json
+import sys
 
-from redis import client
+from aiohttp.client_reqrep import ClientResponse
+
 
 from kafka import KafkaConsumer
 from asyncio import get_event_loop, ensure_future
-from aiohttp.web import Application, AppRunner, TCPSite
 from aiohttp import ClientSession
 import logging
-from redis.client import Redis
-import sys
+from urllib.parse import quote_plus as quote
 
 if __name__ == "__main__":
 
-    service_name = os.getenv("service_name")
+    service_name = os.getenv("SERVICE_NAME")
 
     logger = logging.getLogger(service_name)
-    logger.setLevel(logging.INFO)
-    logger.info("Consumer started")
-    print("Consumer started")
+    logger.debug("Consumer started")
 
-    topic = os.getenv("topic")
+    topic = os.getenv("TOPIC")
     encoding = os.getenv("ENCODING")
-
+    
+    mongo_host = os.getenv("MONGO_HOST")
+    mogno_port = os.getenv("MONGO_PORT")
+    mongo_api = os.getenv("MONGO_API")
+    mongo_base_path = f'http://{mongo_host}:{mogno_port}/{mongo_api}'
+    
     consumer = KafkaConsumer(
         topic,
         api_version=(0, 10, 2),
         value_deserializer=lambda v: json.loads(v.decode(encoding)),
-        bootstrap_servers=[os.getenv("server")]
+        bootstrap_servers=[os.getenv("SERVER")]
     )
 
-    redis = Redis(
-        host=os.getenv("REDIS_HOST"),
-        port=os.getenv("REDIS_PORT"),
-        decode_responses=True
-    )
+    
+    async def save_to_db(msg, client_session):
+        cresponse: ClientResponse = await client_session.post(url=mongo_base_path + '/add',
+                                                                data=json.dumps(msg.value))
+        return cresponse
 
-    redis_key = "logs"
 
     async def looped(loop=None):
         async with ClientSession() as client_session:
             while True:
                 try:
                     for msg in consumer:
-                        msg = msg.value
-                        logger.info(msg)
-                        print("msg:", msg)
-                        
-                        value = redis.get(redis_key)
-                        print("value:", value)
-                        if not value:
-                            value = [msg]
-                        else: 
-                            value = json.loads(value)
-                            value.append(msg)
-
-                        print(redis.set(redis_key, json.dumps(value)))
-                        print(redis.get(redis_key))
-                        sys.stdout.flush()
+                        await save_to_db(msg, client_session)
                 except Exception as exc:
                     logger.exception(exc)
                 await sleep(5, loop=loop)
+
 
     loop = get_event_loop()
     try:

@@ -1,43 +1,98 @@
 version: "3.8"
 
+networks:
+  s0rago-net:
+    driver: bridge
+    name: s0rago-net
+
 services:
   kafka-prod:
     image: 'kafka-prod:latest'
     build:
       context: ./producer
     container_name: kafka-prod
+    networks:
+      s0rago-net:
+        aliases:
+          - kafka-prod
     ports:
       - "5000:5000"
     expose:
-      - "5000"
+      - 5000
     environment:
-      service_name: afonin.prod
-      server: 51.250.30.101:9092
-      topic: logs-topic
-      port: 5000
-      host: 0.0.0.0
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      SERVICE_NAME: afonin.prod
+      SERVER: 51.250.30.101:9092
+      TOPIC: logs-topic
+      PORT: 5000
+      HOST: 0.0.0.0
       ENCODING: UTF-8
-      PYTHONUNBUFFERED: 1
 
   kafka-cons:
     image: 'kafka-cons:latest'
     build:
       context: ./consumer
     container_name: kafka-cons
+    networks:
+      s0rago-net:
+        aliases:
+          - kafka-cons
     ports:
     # external:internal
       - "5001:5000"
     expose:
-      - "5001"
+      - 5001
     environment:
-      service_name: afonin.cons
-      server: 51.250.30.101:9092
-      topic: logs-topic
-      port: 5000
-      host: 0.0.0.0
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+      SERVICE_NAME: afonin.cons
+      SERVER: 51.250.30.101:9092
+      TOPIC: logs-topic
+      PORT: 5000
+      HOST: 0.0.0.0
       ENCODING: UTF-8
-      PYTHONUNBUFFERED: 1
+      MONGO_HOST: mongo-service
+      MONGO_PORT: 5002
+      MONGO_API: afonin/api/v1/mongo
+  
+  mongo-service:
+    image: 'mongo-service:latest'
+    build:
+      context: ./mongo-service
+    container_name: mongo-service
+    networks:
+      s0rago-net:
+        aliases:
+          - mongo-service
+    ports:
+    # external:internal
+      - "5002:5000"
+    expose:
+      - 5002
+    environment:
+      SERVICE_NAME: afonin.mongo-service
+      PORT: 5000
+      HOST: 0.0.0.0
+      ENCODING: UTF-8
+      MONGO_USER: adminuser
+      MONGO_PASS: password123
+      MONGO_DB_NAME: admin
+      MONGO_RS: rs01
+      MONGO_HOST: mongodb
+      MONGO_PORT: 27017
+      MONGO_COLL: afonin
+
+  mongodb:
+    container_name: mongodb-service
+    image: mongo:latest
+    networks:
+      s0rago-net:
+        aliases:
+          - mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: adminuser
+      MONGO_INITDB_ROOT_PASSWORD: password123
+    volumes:
+      - $PWD/mongodb_data_container:/data/db
+    ports:
+      - 27017:27017
+    expose:
+      - 27017
+    command: mongod --dbpath /data/db

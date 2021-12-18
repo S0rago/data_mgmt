@@ -21,14 +21,22 @@ spec:
         ports:
         - containerPort: 5000
         env:
-          - name: service_name
+          - name: SERVICE_NAME
             value: afonin.cons
-          - name: server
+          - name: SERVER
             # value: 51.250.30.101:9092
             value: kafka-service:9092 
-          - name: topic
+          - name: TOPIC
             value: logs-topic
-          - name: port
+          - name: PORT
             value: "5000"
-          - name: host
+          - name: HOST
             value: 0.0.0.0
+          - name: ENCODING
+            value: UTF-8
+          - name: MONGO_HOST
+            value: mongo-service
+          - name: MONGO_PORT
+            value: "80"
+          - name: MONGO_API
+            value: afonin/api/v1/mongo

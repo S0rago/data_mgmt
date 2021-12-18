@@ -1,8 +1,6 @@
 import os
-import json
 
-from kafka import KafkaProducer
-from controller import Controller
+from controller import ControllerMongo
 from asyncio import get_event_loop, ensure_future
 from aiohttp.web import Application, AppRunner, TCPSite
 import logging
@@ -12,22 +10,16 @@ if __name__ == "__main__":
     service_name = os.getenv("SERVICE_NAME")
     
     logger = logging.getLogger(service_name)
-    logger.debug("Producer started")
-    
-    
-    topic = os.getenv("TOPIC")
+    logger.debug("DB-service started")
 
-    producer = KafkaProducer(
-        api_version=(0, 10, 2),
-        value_serializer=lambda v: json.dumps(v).encode('utf-8'),
-        bootstrap_servers=[os.getenv("SERVER")]
-    )
+    current_db = os.getenv("CURRENT_DB")
+    controller = ControllerMongo(service_name)
     
-    controller = Controller(service_name, topic, producer)
 
     async def main(loop=None):
         application = Application(logger=logger)
-        application.router.add_post("/afonin/api/v1/sendmsg", controller.add_data)
+        application.router.add_post("/afonin/api/v1/mongo/add", controller.add_data)
+        application.router.add_get("/afonin/api/v1/mongo/get", controller.get_data)
 
         runner = AppRunner(application)
 
@@ -35,6 +27,7 @@ if __name__ == "__main__":
 
         site = TCPSite(runner, os.getenv("HOST"), os.getenv("PORT"))
         await site.start()
+    
     
     loop = get_event_loop()
     try:

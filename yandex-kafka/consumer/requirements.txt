@@ -4,3 +4,4 @@ kafka-python==2.0.2
 requests==2.22.0
 uuid==1.30
 redis==4.0.2
+pymongo==4.0.1

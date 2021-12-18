@@ -6,6 +6,6 @@ spec:
   selector:
     app: kafka-cons-afonin
   ports:
-  - port: 5000 #external(exposed)
+  - port: 80 #external(exposed)
     targetPort: 5000 #internal
-  type: LoadBalancer
+  type: NodePort
