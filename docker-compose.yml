@@ -9,14 +9,14 @@ services:
   kafka-prod:
     image: 'kafka-prod:latest'
     build:
-      context: ./producer
+      context: ./yandex-kafka/producer
     container_name: kafka-prod
     networks:
       s0rago-net:
         aliases:
           - kafka-prod
     ports:
-      - "5000:5000"
+      - 5000:5000
     expose:
       - 5000
     environment:
@@ -30,7 +30,7 @@ services:
   kafka-cons:
     image: 'kafka-cons:latest'
     build:
-      context: ./consumer
+      context: ./yandex-kafka/consumer
     container_name: kafka-cons
     networks:
       s0rago-net:
@@ -38,7 +38,7 @@ services:
           - kafka-cons
     ports:
     # external:internal
-      - "5001:5000"
+      - 5001:5000
     expose:
       - 5001
     environment:
@@ -55,7 +55,7 @@ services:
   mongo-service:
     image: 'mongo-service:latest'
     build:
-      context: ./mongo-service
+      context: ./yandex-kafka/mongo-service
     container_name: mongo-service
     networks:
       s0rago-net:
@@ -63,7 +63,7 @@ services:
           - mongo-service
     ports:
     # external:internal
-      - "5002:5000"
+      - 5002:5000
     expose:
       - 5002
     environment:
@@ -96,3 +96,23 @@ services:
     expose:
       - 27017
     command: mongod --dbpath /data/db
+
+  image-resizer:
+    container_name: image-resizer
+    image: image-resizer:latest
+    build:
+      context: ./image-resizer
+    networks:
+      s0rago-net:
+        aliases:
+          - image-resizer
+    environment:
+      SERVICE_NAME: afonin.image-resizer
+      PORT: 5000
+      HOST: 0.0.0.0
+      ENCODING: UTF-8
+    ports:
+      - 5004:5000
+    expose:
+      - 5004
+      
