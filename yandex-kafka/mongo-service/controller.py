@@ -4,8 +4,9 @@ from aiohttp.web import Request, Response
 from json import dumps, loads
 from pymongo import MongoClient
 from datetime import datetime
+
+
 class ControllerMongo:
-    
     def __init__(self, service_name):
         self.service_name = service_name
         self.encoding = os.getenv('ENCODING')

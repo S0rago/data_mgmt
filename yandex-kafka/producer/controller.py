@@ -1,7 +1,7 @@
+from json import dumps
 import os 
 
 from aiohttp.web import Request, Response
-from aiohttp_rest_api.responses import respond_with_json
 from kafka import KafkaProducer
 
 class Controller:
@@ -26,7 +26,6 @@ class Controller:
             result = {"message": "Message send timeout"}
             status=500
 
-        response = respond_with_json(result, status)
-        return response
+        return Response(body=dumps(result), status=status, content_type="application/json")
         
     

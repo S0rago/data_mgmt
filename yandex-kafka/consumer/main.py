@@ -2,11 +2,8 @@ from asyncio.tasks import sleep
 import logging
 import os
 import json
-import sys
 
 from aiohttp.client_reqrep import ClientResponse
-
-
 from kafka import KafkaConsumer
 from asyncio import get_event_loop, ensure_future
 from aiohttp import ClientSession
