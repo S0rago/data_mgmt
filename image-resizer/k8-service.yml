@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-image-service-afonin
+spec:
+  selector:
+    app: kafka-image-afonin
+  ports:
+  - port: 80 #external(exposed)
+    targetPort: 5000 #internal
+  type: NodePort

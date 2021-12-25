@@ -99,7 +99,7 @@ services:
 
   image-resizer:
     container_name: image-resizer
-    image: image-resizer:latest
+    image: s0rago/data-management:resizer
     build:
       context: ./image-resizer
     networks:
@@ -111,8 +111,9 @@ services:
       PORT: 5000
       HOST: 0.0.0.0
       ENCODING: UTF-8
+      BASE_API: /afonin/api/v1/image
     ports:
-      - 5004:5000
+      - 6969:5000
     expose:
-      - 5004
+      - 6969
       

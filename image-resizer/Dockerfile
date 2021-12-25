@@ -7,5 +7,4 @@ RUN apt-get install ffmpeg libsm6 libxext6  -y
 RUN pip install --no-cache-dir --upgrade -r /telegram/requirements.txt
 COPY . .
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
-
+CMD ["python", "main.py"]

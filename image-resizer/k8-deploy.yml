@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-depl-image-afonin
+spec:
+  selector:
+    matchLabels:
+      app: kafka-image-afonin
+  template:
+    metadata:
+      labels:
+        app: kafka-image-afonin
+    spec:
+      containers:
+      - name: kafka-image-afonin
+        image: s0rago/data-management:resizer
+        resources:
+          limits:
+            memory: "64Mi"
+            cpu: "50m"
+        ports:
+        - containerPort: 5000
+        env:
+          - name: SERVICE_NAME
+            value: afonin.image-resizer
+          - name: PORT
+            value: "5000"
+          - name: HOST
+            value: 0.0.0.0
+          - name: ENCODING
+            value: UTF-8
+          - name: BASE_API
+            value: /afonin/api/v1/image
