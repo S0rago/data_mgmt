@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kafka-depl-image-afonin
+  name: kafka-deployment-image-afonin
 spec:
   selector:
     matchLabels:
@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
       - name: kafka-image-afonin
-        image: s0rago/data-management:resizer
+        image: s0rago/data-management:image-resizer
         resources:
           limits:
             memory: "64Mi"
