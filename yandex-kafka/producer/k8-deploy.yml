@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kafka-prod-deployment-afonin
+  name: kafka-deployment-producer-afonin
 spec:
   selector:
     matchLabels:
-      app: kafka-prod-afonin
+      app: kafka-producer-afonin
   template:
     metadata:
       labels:
-        app: kafka-prod-afonin
+        app: kafka-producer-afonin
     spec:
       containers:
-      - name: kafka-prod-afonin
+      - name: kafka-producer-afonin
         image: s0rago/data-management:producer
         resources:
           limits:
@@ -22,7 +22,7 @@ spec:
         - containerPort: 5000
         env:
           - name: SERVICE_NAME
-            value: afonin.prod
+            value: afonin.producer
           - name: SERVER
             # value: 51.250.30.101:9092
             value: kafka-service:9092 

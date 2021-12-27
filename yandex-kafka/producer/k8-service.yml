@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-prod-service-afonin
+  name: kafka-service-producer-afonin
 spec:
   selector:
-    app: kafka-prod-afonin
+    app: kafka-producer-afonin
   ports:
   - port: 80 #external(exposed)
     targetPort: 5000 #internal

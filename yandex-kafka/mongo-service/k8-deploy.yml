@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kafka-mongo-depl-afonin
+  name: kafka-mongo-deployment-afonin
 spec:
   selector:
     matchLabels:
