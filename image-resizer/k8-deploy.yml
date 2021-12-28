@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kafka-deployment-image-afonin
+  name: deployment-image-afonin # Менять
 spec:
   selector:
     matchLabels:
-      app: kafka-image-afonin
+      app: image-afonin # Менять
   template:
     metadata:
       labels:
-        app: kafka-image-afonin
+        app: image-afonin # Менять
     spec:
       containers:
-      - name: kafka-image-afonin
-        image: s0rago/data-management:image-resizer
+      - name: image-afonin # Менять
+        image: s0rago/data-management:image-resizer # Менять
         resources:
           limits:
             memory: "64Mi"
             cpu: "50m"
         ports:
-        - containerPort: 5000
-        env:
+        - containerPort: 5000 
+        env: # Менять ниже на свои, которые в коде юзатся
           - name: SERVICE_NAME
             value: afonin.image-resizer
           - name: PORT
